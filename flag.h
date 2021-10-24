@@ -23,8 +23,6 @@ flag_t* set_flag(const type_t type, const char* name);
 void filter_flags(int* argc, char** argv);
 #endif
 
-/*#define FLAG_CAPACITY 3*/
-
 #ifndef FLAG_H_IMPLEMENTATION
 #define FLAG_H_IMPLEMENTATION
 
