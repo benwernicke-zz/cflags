@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+// TODO: Comment Code
+
 typedef enum {
     BOOL,
     STR,
@@ -63,6 +65,7 @@ flag_t* get_flag(const char* name)
     return NULL;
 }
 
+// TODO: Refactor that shit
 void filter_flags(int* argc, char** argv)
 {
     flag_t* flag = NULL;
