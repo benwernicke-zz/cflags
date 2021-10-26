@@ -21,7 +21,7 @@ typedef struct
 } flag_t;
 
 flag_t* set_flag(const type_t type, const char* name);
-void filter_flags(int* argc, char** argv);
+int filter_flags(int* argc, char** argv);
 #endif
 
 #ifndef FLAG_H_IMPLEMENTATION
@@ -67,23 +67,33 @@ flag_t* get_flag(const char* name)
 }
 
 // TODO: Refactor that shit
-void filter_flags(int* argc, char** argv)
+// filters argv for flags and parameters, stores valid flags in global FLAG_BUFFER
+// returns with exit code 1 if STR Flag doesn't have a parameter
+// otherwise returns with 0
+int filter_flags(int* argc, char** argv)
 {
     flag_t* flag = NULL;
+
     char* rest_buffer[*argc];
     int rest_counter = 0;
+
     for (int i = 0; i < *argc; ++i) {
         flag = get_flag(argv[i]);
         if (flag != NULL) {
             flag->valid = true;
             switch (flag->type) {
             case STR:
-                ++i;
-                assert(i < *argc && get_flag(argv[i]) == NULL); //Asserts the existence of an Argument
+                ++i; //inc index to look at parameter of flag
+
+                //retuns with errorcode if no parameter is given
+                if (!(i < *argc && get_flag(argv[i]) == NULL))
+                    return 1;
+
                 flag->content = argv[i];
                 break;
+
             case BOOL:
-                flag->content = (void*)&flag->valid;
+                flag->content = (void*)&flag->valid; //we need a void* ptr to a bool
                 break;
             }
 
@@ -91,8 +101,10 @@ void filter_flags(int* argc, char** argv)
             rest_buffer[rest_counter++] = argv[i];
         }
     }
+
     *argc = rest_counter;
-    for (int i = 0; i < *argc; ++i)
+    for (int i = 0; i < rest_counter; ++i) //that should be memcpy, but isn't
         argv[i] = rest_buffer[i];
+    return 0;
 }
 #endif
