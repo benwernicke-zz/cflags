@@ -62,7 +62,7 @@ flag_t* get_flag(const char* name)
     for (int k = 0; k < FLAG_CAPACITY; ++k) {
         if (strcmp(FLAG_BUFFER[index].name, name) == 0)
             return &FLAG_BUFFER[index];
-        index = (index < FLAG_CAPACITY - 1) ? index + 1 : 0;
+        index = (index < FLAG_CAPACITY - 1) ? index + 1 : 0; //flip to index 0 if end of array is reached
     }
     return NULL;
 }
