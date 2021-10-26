@@ -7,7 +7,6 @@
 #include <string.h>
 
 // TODO: Comment Code
-
 typedef enum {
     BOOL,
     STR,
@@ -80,7 +79,7 @@ void filter_flags(int* argc, char** argv)
             switch (flag->type) {
             case STR:
                 ++i;
-                assert(i < *argc || get_flag(argv[i]) == NULL);
+                assert(i < *argc && get_flag(argv[i]) == NULL); //Asserts the existence of an Argument
                 flag->content = argv[i];
                 break;
             case BOOL:
