@@ -29,12 +29,13 @@ void filter_flags(int* argc, char** argv);
 #define FLAG_H_IMPLEMENTATION
 
 #ifndef FLAG_CAPACITY
-#define FLAG_CAPACITY -1
+#define FLAG_CAPACITY -1 //little Hack (?)better Way(?)
 #endif
 
 //define FLAG_CAPACITY above #include "flag.h"
 flag_t FLAG_BUFFER[FLAG_CAPACITY] = { { .name = NULL, .valid = false, .content = NULL } };
 
+//better way????
 size_t hash(const char* s)
 {
     size_t index = 0;
@@ -44,11 +45,12 @@ size_t hash(const char* s)
     return index % FLAG_CAPACITY;
 }
 
+//finds right slot in global FLAG array and returns pointer to that slot
 flag_t* set_flag(const type_t type, const char* name)
 {
     size_t index = hash(name);
     while (FLAG_BUFFER[index].name != NULL)
-        index = (index < FLAG_CAPACITY - 1) ? index + 1 : 0;
+        index = (index < FLAG_CAPACITY - 1) ? index + 1 : 0; //search for right index starts somewhere in the middle; flips to 0 if it reaches the end
     FLAG_BUFFER[index].name = name;
     FLAG_BUFFER[index].type = type;
     return &FLAG_BUFFER[index];
