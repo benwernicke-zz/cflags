@@ -34,7 +34,7 @@ int filter_flags(int* argc, char** argv);
 //define FLAG_CAPACITY above #include "flag.h"
 flag_t FLAG_BUFFER[FLAG_CAPACITY] = { { .name = NULL, .valid = false, .content = NULL } };
 
-//better way????
+//really bad hash function
 size_t hash(const char* s)
 {
     size_t index = 0;
