@@ -74,6 +74,7 @@ int filter_flags(int* argc, char** argv)
 {
     flag_t* flag = NULL;
 
+    //store the not used parts of argc and argv
     char* rest_buffer[*argc];
     int rest_counter = 0;
 
@@ -83,7 +84,7 @@ int filter_flags(int* argc, char** argv)
             flag->valid = true;
             switch (flag->type) {
             case STR:
-                ++i; //inc index to look at parameter of flag
+                ++i; //inc index to look at argument of flag
 
                 //retuns with errorcode if no parameter is given
                 if (!(i < *argc && get_flag(argv[i]) == NULL))
@@ -97,9 +98,8 @@ int filter_flags(int* argc, char** argv)
                 break;
             }
 
-        } else {
+        } else
             rest_buffer[rest_counter++] = argv[i];
-        }
     }
 
     *argc = rest_counter;
