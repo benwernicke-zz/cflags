@@ -35,6 +35,7 @@ int filter_flags(int* argc, char** argv);
 flag_t FLAG_BUFFER[FLAG_CAPACITY] = { { .name = NULL, .valid = false, .content = NULL } };
 
 //really bad hash function
+//combination of cryptohash and lagrange might do the trick
 size_t hash(const char* s)
 {
     size_t index = 0;
