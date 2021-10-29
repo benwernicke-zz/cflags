@@ -39,7 +39,7 @@ size_t hash(const char* s)
 {
     size_t index = 0;
     while (*s != '\0')
-        index += *s++;
+        index *= *s++;
 
     return index % FLAG_CAPACITY;
 }
