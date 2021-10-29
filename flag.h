@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// TODO: Comment Code
 typedef enum {
     BOOL,
     STR,
@@ -34,8 +33,8 @@ int filter_flags(int* argc, char** argv);
 //define FLAG_CAPACITY above #include "flag.h"
 flag_t FLAG_BUFFER[FLAG_CAPACITY] = { { .name = NULL, .valid = false, .content = NULL } };
 
-//really bad hash function
-//combination of cryptohash and lagrange might do the trick
+// TODO: make better
+//combination of cryptohash and lagrange might do the trick -> look into that
 size_t hash(const char* s)
 {
     size_t index = 0;
@@ -48,11 +47,16 @@ size_t hash(const char* s)
 //finds right slot in global FLAG array and returns pointer to that slot
 flag_t* set_flag(const type_t type, const char* name)
 {
+    //index where it should be
     size_t index = hash(name);
+
+    //compensate collision
     while (FLAG_BUFFER[index].name != NULL)
-        index = (index < FLAG_CAPACITY - 1) ? index + 1 : 0; //search for right index starts somewhere in the middle; flips to 0 if it reaches the end
+        index = (index < FLAG_CAPACITY - 1) ? index + 1 : 0; //flip from arr len to 0
+
     FLAG_BUFFER[index].name = name;
     FLAG_BUFFER[index].type = type;
+
     return &FLAG_BUFFER[index];
 }
 
@@ -67,10 +71,8 @@ flag_t* get_flag(const char* name)
     return NULL;
 }
 
-// TODO: Refactor that shit
 // filters argv for flags and parameters, stores valid flags in global FLAG_BUFFER
 // returns with exit code 1 if STR Flag doesn't have a parameter
-// otherwise returns with 0
 int filter_flags(int* argc, char** argv)
 {
     flag_t* flag = NULL;
@@ -87,7 +89,7 @@ int filter_flags(int* argc, char** argv)
             case STR:
                 ++i; //inc index to look at argument of flag
 
-                //retuns with errorcode if no parameter is given
+                //retuns with errorcode if no argument is given
                 if (!(i < *argc && get_flag(argv[i]) == NULL))
                     return 1;
 
@@ -95,7 +97,7 @@ int filter_flags(int* argc, char** argv)
                 break;
 
             case BOOL:
-                flag->content = (void*)&flag->valid; //we need a void* ptr to a bool
+                flag->content = (void*)&flag->valid; //little hacky | we need a void* ptr to a bool
                 break;
             }
 
