@@ -34,7 +34,7 @@ int filter_flags(int* argc, char** argv);
 flag_t FLAG_BUFFER[FLAG_CAPACITY] = { { .name = NULL, .valid = false, .content = NULL } };
 
 // TODO: make better
-//combination of cryptohash and lagrange might do the trick -> look into that
+//combination of cryptohash and lagrange might do the trick -> look into that -> every other func can be simplified
 size_t hash(const char* s)
 {
     size_t index = 0;
