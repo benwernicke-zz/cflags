@@ -17,6 +17,7 @@ typedef struct
     bool valid;
     void* content;
     const char* name;
+    const char* description;
 } flag_t;
 
 flag_t* set_flag(const type_t type, const char* name);
@@ -45,7 +46,7 @@ size_t hash(const char* s)
 }
 
 //finds right slot in global FLAG array and returns pointer to that slot
-flag_t* set_flag(const type_t type, const char* name)
+flag_t* set_flag(const type_t type, const char* name, const char* description)
 {
     //index where it should be
     size_t index = hash(name);
@@ -56,6 +57,7 @@ flag_t* set_flag(const type_t type, const char* name)
 
     FLAG_BUFFER[index].name = name;
     FLAG_BUFFER[index].type = type;
+    FLAG_BUFFER[index].description = description;
 
     return &FLAG_BUFFER[index];
 }
