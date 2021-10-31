@@ -66,7 +66,7 @@ void dump_descriptions()
     printf("\n");
 }
 
-//finds right slot in global FLAG array and returns pointer to that slot
+//finds right slot in global FLAG array, sets Flag and returns pointer to that slot
 flag_t* set_flag(const type_t type, const char* name, const char* description)
 {
     //name must exist
@@ -110,7 +110,7 @@ void filter_flags(int* argc, char** argv)
     for (int i = 0; i < *argc; ++i) {
 
         //print descriptions when help flags occur
-        if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0) {
+        if ((strcmp(argv[i], "-h") & strcmp(argv[i], "--help")) == 0) {
             dump_descriptions();
             continue;
         }
