@@ -49,6 +49,7 @@ size_t hash(const char* s)
     return index % FLAG_CAPACITY;
 }
 
+//for -h and --help
 void dump_descriptions()
 {
     //to check if name and description exist
@@ -138,8 +139,6 @@ void filter_flags(int* argc, char** argv)
 
     //set argc and argv to rest_buffer and rest_counter
     *argc = rest_counter;
-    // TODO: Find std func for that
-    for (int i = 0; i < rest_counter; ++i) //that should be memcpy, but isn't (???)
-        argv[i] = rest_buffer[i];
+    memcpy(argv, rest_buffer, rest_counter * sizeof(char*));
 }
 #endif
