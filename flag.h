@@ -1,24 +1,20 @@
 #ifndef FLAG_H
 #define FLAG_H
-#include <assert.h>
-#include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 
 typedef enum {
     BOOL,
     STR,
 } type_t;
 
-typedef struct
-{
+typedef struct {
     type_t type;
     bool valid;
     void* content;
-    const char* name; //first flag name
+    const char* name;
     const char* description;
 } flag_t;
 
@@ -55,8 +51,16 @@ size_t hash(const char* s)
 
 void dump_descriptions()
 {
+    //to check if name and description exist
+    const char* name = NULL;
+    const char* description = NULL;
+
     for (int i = 0; i < FLAG_CAPACITY; i++) {
-        printf("%s\t%s\n", FLAG_BUFFER[i].name, FLAG_BUFFER[i].description);
+        name = FLAG_BUFFER[i].name;
+        description = FLAG_BUFFER[i].description;
+
+        //checking
+        printf("%s\t%s\n", (name) ? name : "", (description) ? description : "");
     }
     printf("\n");
 }
@@ -64,6 +68,9 @@ void dump_descriptions()
 //finds right slot in global FLAG array and returns pointer to that slot
 flag_t* set_flag(const type_t type, const char* name, const char* description)
 {
+    //name must exist
+    ASSERT(name != NULL, "Flags need a name\n");
+
     //index where it should be
     size_t index = hash(name);
 
@@ -114,13 +121,11 @@ void filter_flags(int* argc, char** argv)
             flag->valid = true;
             switch (flag->type) {
             case STR:
-                ++i; //inc index to look at argument of flag
+                //Next argv must be an argument for the flag
+                ASSERT(i + 1 < *argc && get_flag(argv[i + 1]) == NULL, "ERROR: %s needs an argument\n", flag->name);
 
-                ASSERT(i < *argc && get_flag(argv[i]) == NULL, "%s needs an argument\n", flag->name);
-
-                flag->content = argv[i];
+                flag->content = argv[++i];
                 break;
-
             case BOOL:
                 flag->content = (void*)&flag->valid; //little hacky | we need a void* ptr to a bool
                 break;
@@ -133,7 +138,8 @@ void filter_flags(int* argc, char** argv)
 
     //set argc and argv to rest_buffer and rest_counter
     *argc = rest_counter;
-    for (int i = 0; i < rest_counter; ++i) //that should be memcpy, but isn't
+    // TODO: Find std func for that
+    for (int i = 0; i < rest_counter; ++i) //that should be memcpy, but isn't (???)
         argv[i] = rest_buffer[i];
 }
 #endif
