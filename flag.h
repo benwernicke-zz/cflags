@@ -1,10 +1,12 @@
 #ifndef FLAG_H
 #define FLAG_H
 #include <assert.h>
+#include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 typedef enum {
     BOOL,
@@ -16,12 +18,12 @@ typedef struct
     type_t type;
     bool valid;
     void* content;
-    const char* name;
+    const char* name; //first flag name
     const char* description;
 } flag_t;
 
-flag_t* set_flag(const type_t type, const char* name);
-int filter_flags(int* argc, char** argv);
+flag_t* set_flag(const type_t type, const char* name, const char* description);
+void filter_flags(int* argc, char** argv);
 #endif
 
 #ifndef FLAG_H_IMPLEMENTATION
@@ -30,6 +32,12 @@ int filter_flags(int* argc, char** argv);
 #ifndef FLAG_CAPACITY
 #define FLAG_CAPACITY -1 //little Hack (?)better Way(?)
 #endif
+
+#define ASSERT(condition, ...)        \
+    if (!(condition)) {               \
+        fprintf(stderr, __VA_ARGS__); \
+        exit(1);                      \
+    }
 
 //define FLAG_CAPACITY above #include "flag.h"
 flag_t FLAG_BUFFER[FLAG_CAPACITY] = { { .name = NULL, .valid = false, .content = NULL } };
@@ -43,6 +51,14 @@ size_t hash(const char* s)
         index *= *s++;
 
     return index % FLAG_CAPACITY;
+}
+
+void dump_descriptions()
+{
+    for (int i = 0; i < FLAG_CAPACITY; i++) {
+        printf("%s\t%s\n", FLAG_BUFFER[i].name, FLAG_BUFFER[i].description);
+    }
+    printf("\n");
 }
 
 //finds right slot in global FLAG array and returns pointer to that slot
@@ -75,7 +91,7 @@ flag_t* get_flag(const char* name)
 
 // filters argv for flags and parameters, stores valid flags in global FLAG_BUFFER
 // returns with exit code 1 if STR Flag doesn't have a parameter
-int filter_flags(int* argc, char** argv)
+void filter_flags(int* argc, char** argv)
 {
     flag_t* flag = NULL;
 
@@ -84,16 +100,23 @@ int filter_flags(int* argc, char** argv)
     int rest_counter = 0;
 
     for (int i = 0; i < *argc; ++i) {
+
+        //print descriptions when help flags occur
+        if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0) {
+            dump_descriptions();
+            continue;
+        }
+
+        //check if flag exists
         flag = get_flag(argv[i]);
+
         if (flag != NULL) {
             flag->valid = true;
             switch (flag->type) {
             case STR:
                 ++i; //inc index to look at argument of flag
 
-                //retuns with errorcode if no argument is given
-                if (!(i < *argc && get_flag(argv[i]) == NULL))
-                    return 1;
+                ASSERT(i < *argc && get_flag(argv[i]) == NULL, "%s needs an argument\n", flag->name);
 
                 flag->content = argv[i];
                 break;
@@ -104,12 +127,13 @@ int filter_flags(int* argc, char** argv)
             }
 
         } else
+            //flag does not exist -> store current char* in rest_buffer to give back later
             rest_buffer[rest_counter++] = argv[i];
     }
 
+    //set argc and argv to rest_buffer and rest_counter
     *argc = rest_counter;
     for (int i = 0; i < rest_counter; ++i) //that should be memcpy, but isn't
         argv[i] = rest_buffer[i];
-    return 0;
 }
 #endif
