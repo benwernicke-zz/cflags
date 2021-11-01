@@ -28,15 +28,18 @@ Small Header only library to parse argv for flags
       
       int main(int argc, char** argv)
       {
-        flag_t* a = set_flag(BOOL, "-a", "boolean flag"); //just a bool
-        flag_t* b = set_flag(STR, "-b", "string flag"); //takes an argument
-        bool_flag(a, "-a", "a nice bool flag");
-        arg_flag(b, "-b", "a nice arg flag");
+        bool_flag(a, "-a", "boolean flag"); //just a bool
+        arg_flag(b, "-b", "string flag"); //takes an argument
+        
         filter_flags(&argc, argv);
         
         if (a->valid)
-          printf("%s\n", a->content);
+          printf("a: valid");
         if (b->valid)
-          printf("%d\n", b->content);
+          printf("b: %d\n", b->content);
+          
+        //U can parse the rest of argv now
+        for(int i = 0; i < argc; i++)
+            printf("%s\n", argv[i]);
         return 0; 
       }
