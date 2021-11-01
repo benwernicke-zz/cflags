@@ -5,8 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-//test comment
-
 typedef enum {
     BOOL,
     STR,
@@ -88,7 +86,9 @@ flag_t* set_flag(const type_t type, const char* name, const char* description)
 
 flag_t* get_flag(const char* name)
 {
+    //index where it should be
     size_t index = hash(name);
+
     for (int k = 0; k < FLAG_CAPACITY; ++k) {
         if (strcmp(FLAG_BUFFER[index].name, name) == 0)
             return &FLAG_BUFFER[index];
