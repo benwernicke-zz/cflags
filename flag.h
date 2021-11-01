@@ -58,7 +58,7 @@ void dump_descriptions()
     for (int i = 0; i < FLAG_CAPACITY; i++) {
         description = FLAG_BUFFER[i].description;
 
-        //checking
+        //printf with description check
         printf("%s\t%s\n", FLAG_BUFFER[i].name, (description) ? description : "");
     }
     printf("\n");
