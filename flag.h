@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+//Constructors for flag types
 #define arg_flag(cname, fname, fdesc) flag_t* cname = set_flag(1, fname, fdesc);
 #define bool_flag(cname, fname, fdesc) flag_t* cname = set_flag(0, fname, fdesc);
 
@@ -106,11 +107,10 @@ void filter_flags(int* argc, char** argv)
     for (int i = 0; i < *argc; ++i) {
         //check if flag exists
         flag = get_flag(argv[i]);
-
         if (flag != NULL) {
             flag->valid = true;
             if (flag->has_arg) {
-                //Next argv must be an argument for the flag
+                //Next argv must be an argument a flag
                 ASSERT(i + 1 < *argc && get_flag(argv[i + 1]) == NULL, "ERROR: %s needs an argument\n", flag->name);
                 flag->content = argv[++i];
             } else
