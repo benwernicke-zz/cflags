@@ -5,6 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define arg_flag(cname, fname, fdesc) flag_t* cname = set_flag(1, fname, fdesc);
+#define bool_flag(cname, fname, fdesc) flag_t* cname = set_flag(0, fname, fdesc);
+
 typedef struct {
     bool has_arg;
     bool valid;
