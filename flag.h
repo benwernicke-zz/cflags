@@ -55,15 +55,13 @@ size_t hash(const char* s)
 void dump_descriptions()
 {
     //to check if name and description exist
-    const char* name = NULL;
     const char* description = NULL;
 
     for (int i = 0; i < FLAG_CAPACITY; i++) {
-        name = FLAG_BUFFER[i].name;
         description = FLAG_BUFFER[i].description;
 
         //checking
-        printf("%s\t%s\n", (name) ? name : "", (description) ? description : "");
+        printf("%s\t%s\n", FLAG_BUFFER[i].name, (description) ? description : "");
     }
     printf("\n");
 }
