@@ -97,8 +97,7 @@ flag_t* get_flag(const char* name)
     return NULL;
 }
 
-// filters argv for flags and parameters, stores valid flags in global FLAG_BUFFER
-// returns with exit code 1 if STR Flag doesn't have a parameter
+//removes valid flags from argv --- stores them in global FLAG_BUFFER
 void filter_flags(int* argc, char** argv)
 {
     flag_t* flag = NULL;
