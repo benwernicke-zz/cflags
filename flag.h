@@ -5,9 +5,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-//Constructors for flag types
+//Constructors for flags
 #define arg_flag(cname, fname, fdesc) flag_t* cname = set_flag(1, fname, fdesc);
 #define bool_flag(cname, fname, fdesc) flag_t* cname = set_flag(0, fname, fdesc);
+
+//removes valid flags from argc, argv --- stores them in global FLAG_BUFFER
+void filter_flags(int* argc, char** argv);
+#endif
+
+#ifndef FLAG_H_IMPLEMENTATION
+#define FLAG_H_IMPLEMENTATION
 
 typedef struct {
     bool has_arg;
@@ -16,13 +23,6 @@ typedef struct {
     const char* name;
     const char* description;
 } flag_t;
-
-flag_t* set_flag(const bool has_arg, const char* name, const char* description);
-void filter_flags(int* argc, char** argv);
-#endif
-
-#ifndef FLAG_H_IMPLEMENTATION
-#define FLAG_H_IMPLEMENTATION
 
 #ifndef FLAG_CAPACITY
 #define FLAG_CAPACITY -1 //little Hack (?)better Way(?)
@@ -96,6 +96,11 @@ flag_t* get_flag(const char* name)
     return NULL;
 }
 
+bool is_help_flag(char* arg)
+{
+    return ((strcmp(arg, "-h") & strcmp(arg, "--help")) == 0);
+}
+
 //removes valid flags from argv --- stores them in global FLAG_BUFFER
 void filter_flags(int* argc, char** argv)
 {
@@ -116,16 +121,14 @@ void filter_flags(int* argc, char** argv)
             }
         } else {
 
-            //print descriptions when help flags occur
-            if ((strcmp(argv[i], "-h") & strcmp(argv[i], "--help")) == 0) {
+            if (is_help_flag(argv[i])) //-h and --help aren't stored in FLAG_BUFFER
                 dump_descriptions();
-                continue;
-            } else
+            else
                 //flag does not exist -> store argv[i] in argv
                 argv[rest_counter++] = argv[i];
         }
     }
-
+    argv[rest_counter] = NULL;
     *argc = rest_counter;
 }
 #endif
