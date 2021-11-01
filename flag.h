@@ -12,7 +12,7 @@
 typedef struct {
     bool has_arg;
     bool valid;
-    void* content;
+    char* content;
     const char* name;
     const char* description;
 } flag_t;
@@ -113,9 +113,7 @@ void filter_flags(int* argc, char** argv)
                 //Next argv must be an argument a flag
                 ASSERT(i + 1 < *argc && get_flag(argv[i + 1]) == NULL, "ERROR: %s needs an argument\n", flag->name);
                 flag->content = argv[++i];
-            } else
-                flag->content = (void*)&flag->valid;
-
+            }
         } else {
 
             //print descriptions when help flags occur
