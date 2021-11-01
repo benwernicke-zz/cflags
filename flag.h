@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+//test comment
+
 typedef enum {
     BOOL,
     STR,
