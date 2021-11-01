@@ -103,8 +103,7 @@ void filter_flags(int* argc, char** argv)
 {
     flag_t* flag = NULL;
 
-    //store the not used parts of argc and argv
-    char* rest_buffer[*argc];
+    //new argc
     int rest_counter = 0;
 
     for (int i = 0; i < *argc; ++i) {
@@ -133,12 +132,10 @@ void filter_flags(int* argc, char** argv)
             }
 
         } else
-            //flag does not exist -> store current char* in rest_buffer to give back later
-            rest_buffer[rest_counter++] = argv[i];
+            //flag does not exist -> store argv[i] in argv
+            argv[rest_counter++] = argv[i];
     }
 
-    //set argc and argv to rest_buffer and rest_counter
     *argc = rest_counter;
-    memcpy(argv, rest_buffer, rest_counter * sizeof(char*));
 }
 #endif
