@@ -37,8 +37,7 @@ typedef struct {
 //define FLAG_CAPACITY above #include "flag.h"
 flag_t FLAG_BUFFER[FLAG_CAPACITY] = { { .name = NULL, .valid = false, .content = NULL } };
 
-// TODO: make better
-//combination of cryptohash and lagrange might do the trick -> look into that -> every other func can be simplified
+// TODO: Implement Perfect Hashing
 size_t hash(const char* s)
 {
     size_t index = 0;
@@ -114,10 +113,13 @@ void filter_flags(int* argc, char** argv)
         flag = get_flag(argv[i]);
 
         if (flag != NULL) {
+
             flag->valid = true;
+
             if (flag->has_arg) {
                 //Next argv must be an argument for the flag
                 ASSERT(i + 1 < *argc && get_flag(argv[i + 1]) == NULL, "ERROR: %s needs an argument\n", flag->name);
+
                 flag->content = argv[++i];
             }
         } else {
