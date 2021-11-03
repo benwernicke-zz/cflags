@@ -1,9 +1,5 @@
 #ifndef FLAG_H
 #define FLAG_H
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 //Constructors for flags
 #define arg_flag(cname, fname, fdesc) flag_t* cname = set_flag(1, fname, fdesc);
@@ -15,6 +11,12 @@ void filter_flags(int* argc, char** argv);
 
 #ifndef FLAG_H_IMPLEMENTATION
 #define FLAG_H_IMPLEMENTATION
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// TODO: Multiple Argument Flag?
 
 typedef struct {
     bool has_arg;
