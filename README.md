@@ -36,7 +36,7 @@ Small Header only library to parse argv for flags
         if (a->valid)
           printf("a: valid");
         if (b->valid)
-          printf("b: %d\n", b->content);
+          printf("b: %s\n", b->content);
           
         //U can parse the rest of argv now
         for(int i = 0; i < argc; i++)
