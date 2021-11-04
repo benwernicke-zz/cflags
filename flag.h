@@ -89,10 +89,11 @@ flag_t* get_flag(const char* name)
     //index where it should be
     size_t index = hash(name);
 
+    //compensate collision
     for (int k = 0; k < FLAG_CAPACITY; ++k) {
         if (strcmp(FLAG_BUFFER[index].name, name) == 0)
             return &FLAG_BUFFER[index];
-        index = (index < FLAG_CAPACITY - 1) ? index + 1 : 0; //flip to index 0 if end of array is reached
+        index = (index < FLAG_CAPACITY - 1) ? index + 1 : 0; //flip from arr len to 0
     }
     return NULL;
 }
@@ -132,6 +133,8 @@ void filter_flags(int* argc, char** argv)
                 argv[rest_counter++] = argv[i];
         }
     }
+
+    //argv has to be NULL terminated
     argv[rest_counter] = NULL;
     *argc = rest_counter;
 }
