@@ -64,6 +64,7 @@ void dump_descriptions()
     printf("\n");
 }
 
+// TODO: Do this at compile time
 //finds right slot in global FLAG array, sets Flag and returns pointer to that slot
 flag_t* set_flag(const bool has_arg, const char* name, const char* description)
 {
