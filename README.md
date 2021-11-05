@@ -4,7 +4,6 @@ Small Header only library to parse argv for flags
       #define FLAG_CAPACITY <number_of_flags>
       #include "flag.h>
   
-  
       int main(int argc, char** argv)
       {
         //arg_flag takes argument
@@ -28,15 +27,16 @@ Small Header only library to parse argv for flags
       
       int main(int argc, char** argv)
       {
-        bool_flag(a, "-a", "boolean flag"); //just a bool
-        arg_flag(b, "-b", "string flag"); //takes an argument
-        
+        arg_flag(a, "-a", "string flag"); //takes an argument
+        bool_flag(b, "-b", "boolean flag"); //just a bool
+       
         filter_flags(&argc, argv);
         
         if (a->valid)
-          printf("a: valid\n");
+            printf("b: %s\n", b->content);
         if (b->valid)
-          printf("b: %s\n", b->content);
+          printf("a: valid\n");
+
           
         //U can parse the rest of argv now
         for(int i = 0; i < argc; i++)
