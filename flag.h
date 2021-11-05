@@ -18,6 +18,7 @@ void filter_flags(int* argc, char** argv);
 #include <string.h>
 
 // TODO: Multiple Argument Flag
+// TODO: ENUM pos arg
 
 typedef enum {
     BOOL,
