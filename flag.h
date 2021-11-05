@@ -16,7 +16,8 @@ void filter_flags(int* argc, char** argv);
 #include <stdlib.h>
 #include <string.h>
 
-// TODO: Multiple Argument Flag?
+// TODO: Multiple Argument Flag
+// TODO: Positionale Arguments
 
 typedef struct {
     bool has_arg;
