@@ -24,7 +24,6 @@ typedef enum {
     BOOL,
     ARG,
     POS,
-    LIST,
 } flag_type_t;
 
 typedef struct
@@ -179,9 +178,6 @@ void filter_flags(int* argc, char** argv)
             case POS:
                 ASSERT(i == flag->pos_flag.pos, "ERROR: positional FLag %s needs to be in position %ld rather than %d\n", flag->name, flag->pos_flag.pos, i);
                 flag->pos_flag.valid = true;
-                break;
-            case LIST:
-                ASSERT(false, "ERROR List Flag not implemented");
                 break;
             }
     }
