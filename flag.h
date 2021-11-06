@@ -144,6 +144,7 @@ inline static bool is_help_flag(char* arg)
 }
 
 //removes valid flags from argv --- stores them in global FLAG_BUFFER
+//no clue why this is static -- but resolves warnings
 static void filter_flags(int* argc, char** argv)
 {
     flag_t* flag = NULL;
