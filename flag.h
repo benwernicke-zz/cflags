@@ -17,8 +17,7 @@ void filter_flags(int* argc, char** argv);
 #include <stdlib.h>
 #include <string.h>
 
-// TODO: Multiple Argument Flag
-// TODO: ENUM pos arg
+// TODO: ENUM pos arg --> maybe some bind funktion that binds pos flags to an enum
 
 typedef enum {
     BOOL,
