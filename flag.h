@@ -66,7 +66,6 @@ typedef struct {
 //define FLAG_CAPACITY above #include "flag.h"
 flag_t FLAG_BUFFER[FLAG_CAPACITY] = { { .name = NULL } };
 
-// TODO: Implement Perfect Hashing
 size_t hash(const char* s)
 {
     size_t index = 0;
@@ -175,7 +174,7 @@ void filter_flags(int* argc, char** argv)
                 flag->bool_flag.valid = true;
                 break;
             case POS:
-                ASSERT(i == flag->pos_flag.pos, "ERROR: positional FLag %s needs to be in position %ld rather than %d\n", flag->name, flag->pos_flag.pos, i);
+                ASSERT(i == flag->pos_flag.pos, "ERROR: positional FLag \"%s\" needs to be in position %ld rather than %d\n", flag->name, flag->pos_flag.pos, i);
                 flag->pos_flag.valid = true;
                 break;
             }
