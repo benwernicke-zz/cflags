@@ -56,7 +56,7 @@ typedef struct {
 } flag_t;
 
 #ifndef FLAG_CAPACITY
-#define FLAG_CAPACITY -1 //little Hack (?)better Way(?)
+#define FLAG_CAPACITY 1 //little Hack (?)better Way(?)
 #endif
 
 #define ASSERT(condition, ...)        \
@@ -67,8 +67,8 @@ typedef struct {
 
 //define FLAG_CAPACITY above #include "flag.h"
 static flag_t FLAG_BUFFER[FLAG_CAPACITY] = { { .name = NULL } };
+static size_t FLAG_COUNT = 0;
 
-// TODO: Implement Perfect Hashing
 static size_t hash(const char* s)
 {
     size_t index = 0;
@@ -95,6 +95,7 @@ static void dump_descriptions()
 
 static flag_t* set_general_flag(const char* name, const char* description, flag_type_t type)
 {
+    ASSERT(++FLAG_COUNT <= FLAG_CAPACITY, "ERROR: Too many Flags -- define FLAG_CAPACITY to resolve this\n");
     size_t index = hash(name);
     //compensate collision
     while (FLAG_BUFFER[index].name != NULL)
