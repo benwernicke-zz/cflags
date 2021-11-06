@@ -2,9 +2,9 @@
 #define FLAG_H
 
 //Constructors for flags
-#define arg_flag(cname, fname, fdesc) flag_t* cname = set_flag(0, ARG, fname, fdesc);
-#define bool_flag(cname, fname, fdesc) flag_t* cname = set_flag(0, BOOL, fname, fdesc);
-#define pos_flag(cname, fname, fdesc, pos) flag_t* cname = set_flag(pos, POS, fname, fdesc);
+#define arg_flag(cname, fname, fdesc) arg_flag_t* cname = set_arg_flag(fname, fdesc);
+#define bool_flag(cname, fname, fdesc) bool_flag_t* cname = set_bool_flag(fname, fdesc);
+#define pos_flag(cname, fname, fdesc, pos) pos_flag_t* cname = set_pos_flag(pos, fname, fdesc);
 
 //removes valid flags from argc, argv --- stores them in global FLAG_BUFFER
 void filter_flags(int* argc, char** argv);
@@ -27,13 +27,32 @@ typedef enum {
     LIST,
 } flag_type_t;
 
-typedef struct {
-    flag_type_t type;
+typedef struct
+{
     bool valid;
     char* content;
+} arg_flag_t;
+
+typedef struct
+{
+    bool valid;
+} bool_flag_t;
+
+typedef struct
+{
+    bool valid;
+    size_t pos;
+} pos_flag_t;
+
+typedef struct {
+    flag_type_t type;
     const char* name;
     const char* description;
-    size_t pos;
+    union {
+        pos_flag_t pos_flag;
+        arg_flag_t arg_flag;
+        bool_flag_t bool_flag;
+    };
 } flag_t;
 
 #ifndef FLAG_CAPACITY
@@ -47,7 +66,7 @@ typedef struct {
     }
 
 //define FLAG_CAPACITY above #include "flag.h"
-flag_t FLAG_BUFFER[FLAG_CAPACITY] = { { .name = NULL, .valid = false, .content = NULL } };
+flag_t FLAG_BUFFER[FLAG_CAPACITY] = { { .name = NULL } };
 
 // TODO: Implement Perfect Hashing
 size_t hash(const char* s)
@@ -74,16 +93,9 @@ void dump_descriptions()
     printf("\n");
 }
 
-// TODO: Do this at compile time
-//finds right slot in global FLAG array, sets Flag and returns pointer to that slot
-flag_t* set_flag(size_t pos, flag_type_t type, const char* name, const char* description)
+flag_t* set_general_flag(const char* name, const char* description, flag_type_t type)
 {
-    //name must exist
-    ASSERT(name != NULL, "Flags need a name\n");
-
-    //index where it should be
     size_t index = hash(name);
-
     //compensate collision
     while (FLAG_BUFFER[index].name != NULL)
         index = (index < FLAG_CAPACITY - 1) ? index + 1 : 0; //flip from arr len to 0
@@ -91,9 +103,31 @@ flag_t* set_flag(size_t pos, flag_type_t type, const char* name, const char* des
     FLAG_BUFFER[index].name = name;
     FLAG_BUFFER[index].type = type;
     FLAG_BUFFER[index].description = description;
-    FLAG_BUFFER[index].pos = pos;
 
     return &FLAG_BUFFER[index];
+}
+
+arg_flag_t* set_arg_flag(const char* name, const char* description)
+{
+    flag_t* flag = set_general_flag(name, description, ARG);
+    flag->arg_flag.valid = false;
+    flag->arg_flag.content = NULL;
+    return &flag->arg_flag;
+}
+
+bool_flag_t* set_bool_flag(const char* name, const char* description)
+{
+    flag_t* flag = set_general_flag(name, description, BOOL);
+    flag->bool_flag.valid = false;
+    return &flag->bool_flag;
+}
+
+pos_flag_t* set_pos_flag(size_t pos, const char* name, const char* description)
+{
+    flag_t* flag = set_general_flag(name, description, POS);
+    flag->pos_flag.valid = false;
+    flag->pos_flag.pos = pos;
+    return &flag->pos_flag;
 }
 
 flag_t* get_flag(const char* name)
@@ -119,42 +153,38 @@ bool is_help_flag(char* arg)
 void filter_flags(int* argc, char** argv)
 {
     flag_t* flag = NULL;
-
-    //new argc
     int rest_counter = 0;
 
-    for (int i = 0; i < *argc; ++i) {
-        //check if flag exists
+    for (int i = 0; i < *argc; i++) {
+        if (is_help_flag(argv[i])) {
+            dump_descriptions();
+            continue;
+        }
+
         flag = get_flag(argv[i]);
-        if (flag != NULL) {
-            flag->valid = true;
+
+        if (flag == NULL)
+            argv[rest_counter++] = argv[i];
+
+        else
             switch (flag->type) {
             case ARG:
-                //Next argv must be an argument a flag
-                ASSERT(i + 1 < *argc && get_flag(argv[i + 1]) == NULL, "ERROR: %s needs an argument\n", flag->name);
-
-                flag->content = argv[++i];
-                break;
-            case POS:
-                ASSERT(i == flag->pos, "ERROR: Positional Flag: %s in wrong Position %d should be %ld\n", flag->name, i, flag->pos);
+                ASSERT(i + 1 < *argc && get_flag(argv[i + 1]) == NULL, "ERROR: Flag %s needs an argument\n", flag->name);
+                flag->arg_flag.valid = true;
+                flag->arg_flag.content = argv[++i];
                 break;
             case BOOL:
+                flag->bool_flag.valid = true;
+                break;
+            case POS:
+                ASSERT(i == flag->pos_flag.pos, "ERROR: positional FLag %s needs to be in position %ld rather than %d\n", flag->name, flag->pos_flag.pos, i);
+                flag->pos_flag.valid = true;
                 break;
             case LIST:
-                ASSERT(false, "ERROR: LIST_FLAG not implemented");
+                ASSERT(false, "ERROR List Flag not implemented");
                 break;
             }
-        } else {
-
-            if (is_help_flag(argv[i])) //-h and --help aren't stored in FLAG_BUFFER
-                dump_descriptions();
-            else
-                //flag does not exist -> store argv[i] in argv
-                argv[rest_counter++] = argv[i];
-        }
     }
-
-    //argv has to be NULL terminated
     argv[rest_counter] = NULL;
     *argc = rest_counter;
 }
