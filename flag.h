@@ -7,7 +7,7 @@
 #define pos_flag(cname, fname, fdesc, pos) pos_flag_t* cname = set_pos_flag(pos, fname, fdesc);
 
 //removes valid flags from argc, argv --- stores them in global FLAG_BUFFER
-void filter_flags(int* argc, char** argv);
+static void filter_flags(int* argc, char** argv);
 #endif
 
 #ifndef FLAG_H_IMPLEMENTATION
@@ -62,7 +62,7 @@ typedef struct {
 static flag_t FLAG_BUFFER[FLAG_CAPACITY] = { { .name = NULL } };
 static size_t FLAG_COUNT = 0;
 
-static size_t hash(const char* s)
+inline static size_t hash(const char* s)
 {
     size_t index = 0;
     while (*s != '\0')
@@ -72,7 +72,7 @@ static size_t hash(const char* s)
 }
 
 //for -h and --help
-static void dump_descriptions()
+inline static void dump_descriptions()
 {
     //to check if name and description exist
     const char* description = NULL;
@@ -86,7 +86,7 @@ static void dump_descriptions()
     printf("\n");
 }
 
-static flag_t* set_general_flag(const char* name, const char* description, flag_type_t type)
+inline static flag_t* set_general_flag(const char* name, const char* description, flag_type_t type)
 {
     ASSERT(++FLAG_COUNT <= FLAG_CAPACITY, "ERROR: Too many Flags -- define FLAG_CAPACITY to resolve this\n");
     size_t index = hash(name);
@@ -101,7 +101,7 @@ static flag_t* set_general_flag(const char* name, const char* description, flag_
     return &FLAG_BUFFER[index];
 }
 
-static arg_flag_t* set_arg_flag(const char* name, const char* description)
+inline static arg_flag_t* set_arg_flag(const char* name, const char* description)
 {
     flag_t* flag = set_general_flag(name, description, ARG);
     flag->arg_flag.valid = false;
@@ -109,14 +109,14 @@ static arg_flag_t* set_arg_flag(const char* name, const char* description)
     return &flag->arg_flag;
 }
 
-static bool_flag_t* set_bool_flag(const char* name, const char* description)
+inline static bool_flag_t* set_bool_flag(const char* name, const char* description)
 {
     flag_t* flag = set_general_flag(name, description, BOOL);
     flag->bool_flag.valid = false;
     return &flag->bool_flag;
 }
 
-static pos_flag_t* set_pos_flag(size_t pos, const char* name, const char* description)
+inline static pos_flag_t* set_pos_flag(size_t pos, const char* name, const char* description)
 {
     flag_t* flag = set_general_flag(name, description, POS);
     flag->pos_flag.valid = false;
@@ -124,7 +124,7 @@ static pos_flag_t* set_pos_flag(size_t pos, const char* name, const char* descri
     return &flag->pos_flag;
 }
 
-static flag_t* get_flag(const char* name)
+inline static flag_t* get_flag(const char* name)
 {
     //index where it should be
     size_t index = hash(name);
@@ -138,13 +138,13 @@ static flag_t* get_flag(const char* name)
     return NULL;
 }
 
-static bool is_help_flag(char* arg)
+inline static bool is_help_flag(char* arg)
 {
     return ((strcmp(arg, "-h") & strcmp(arg, "--help")) == 0);
 }
 
 //removes valid flags from argv --- stores them in global FLAG_BUFFER
-void filter_flags(int* argc, char** argv)
+static void filter_flags(int* argc, char** argv)
 {
     flag_t* flag = NULL;
     int rest_counter = 0;
