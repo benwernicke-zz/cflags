@@ -17,27 +17,22 @@ void filter_flags(int* argc, char** argv);
 #include <stdlib.h>
 #include <string.h>
 
-// TODO: ENUM pos arg --> maybe some bind funktion that binds pos flags to an enum
-
 typedef enum {
     BOOL,
     ARG,
     POS,
 } flag_type_t;
 
-typedef struct
-{
+typedef struct {
     bool valid;
     char* content;
 } arg_flag_t;
 
-typedef struct
-{
+typedef struct {
     bool valid;
 } bool_flag_t;
 
-typedef struct
-{
+typedef struct {
     bool valid;
     size_t pos;
 } pos_flag_t;
@@ -54,7 +49,7 @@ typedef struct {
 } flag_t;
 
 #ifndef FLAG_CAPACITY
-#define FLAG_CAPACITY -1 //little Hack (?)better Way(?)
+#define FLAG_CAPACITY 1 //little Hack (?)better Way(?)
 #endif
 
 #define ASSERT(condition, ...)        \
@@ -64,9 +59,10 @@ typedef struct {
     }
 
 //define FLAG_CAPACITY above #include "flag.h"
-flag_t FLAG_BUFFER[FLAG_CAPACITY] = { { .name = NULL } };
+static flag_t FLAG_BUFFER[FLAG_CAPACITY] = { { .name = NULL } };
+static size_t FLAG_COUNT = 0;
 
-size_t hash(const char* s)
+static size_t hash(const char* s)
 {
     size_t index = 0;
     while (*s != '\0')
@@ -76,7 +72,7 @@ size_t hash(const char* s)
 }
 
 //for -h and --help
-void dump_descriptions()
+static void dump_descriptions()
 {
     //to check if name and description exist
     const char* description = NULL;
@@ -90,8 +86,9 @@ void dump_descriptions()
     printf("\n");
 }
 
-flag_t* set_general_flag(const char* name, const char* description, flag_type_t type)
+static flag_t* set_general_flag(const char* name, const char* description, flag_type_t type)
 {
+    ASSERT(++FLAG_COUNT <= FLAG_CAPACITY, "ERROR: Too many Flags -- define FLAG_CAPACITY to resolve this\n");
     size_t index = hash(name);
     //compensate collision
     while (FLAG_BUFFER[index].name != NULL)
@@ -104,7 +101,7 @@ flag_t* set_general_flag(const char* name, const char* description, flag_type_t 
     return &FLAG_BUFFER[index];
 }
 
-arg_flag_t* set_arg_flag(const char* name, const char* description)
+static arg_flag_t* set_arg_flag(const char* name, const char* description)
 {
     flag_t* flag = set_general_flag(name, description, ARG);
     flag->arg_flag.valid = false;
@@ -112,14 +109,14 @@ arg_flag_t* set_arg_flag(const char* name, const char* description)
     return &flag->arg_flag;
 }
 
-bool_flag_t* set_bool_flag(const char* name, const char* description)
+static bool_flag_t* set_bool_flag(const char* name, const char* description)
 {
     flag_t* flag = set_general_flag(name, description, BOOL);
     flag->bool_flag.valid = false;
     return &flag->bool_flag;
 }
 
-pos_flag_t* set_pos_flag(size_t pos, const char* name, const char* description)
+static pos_flag_t* set_pos_flag(size_t pos, const char* name, const char* description)
 {
     flag_t* flag = set_general_flag(name, description, POS);
     flag->pos_flag.valid = false;
@@ -127,7 +124,7 @@ pos_flag_t* set_pos_flag(size_t pos, const char* name, const char* description)
     return &flag->pos_flag;
 }
 
-flag_t* get_flag(const char* name)
+static flag_t* get_flag(const char* name)
 {
     //index where it should be
     size_t index = hash(name);
@@ -141,7 +138,7 @@ flag_t* get_flag(const char* name)
     return NULL;
 }
 
-bool is_help_flag(char* arg)
+static bool is_help_flag(char* arg)
 {
     return ((strcmp(arg, "-h") & strcmp(arg, "--help")) == 0);
 }
