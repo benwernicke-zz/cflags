@@ -152,17 +152,15 @@ static void filter_flags(int* argc, char** argv)
     int rest_counter = 0;
 
     for (int i = 0; i < *argc; i++) {
-        if (is_help_flag(argv[i])) {
-            dump_descriptions();
-            continue;
-        }
 
         flag = get_flag(argv[i]);
 
-        if (flag == NULL)
-            argv[rest_counter++] = argv[i];
-
-        else
+        if (flag == NULL) {
+            if (is_help_flag(argv[i]))
+                dump_descriptions();
+            else
+                argv[rest_counter++] = argv[i];
+        } else
             switch (flag->type) {
             case ARG:
                 ASSERT(i + 1 < *argc && get_flag(argv[i + 1]) == NULL, "ERROR: Flag %s needs an argument\n", flag->name);
