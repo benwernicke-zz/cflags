@@ -29,13 +29,16 @@ Small Header only library to parse argv for flags
       {
         arg_flag(a, "-a", "string flag"); //takes an argument
         bool_flag(b, "-b", "boolean flag"); //just a bool
+        pos_flag(p, "p", "positional flag", 1); //flag must be in a certain position of argv - in this case 1
        
         filter_flags(&argc, argv);
         
         if (a->valid)
-            printf("b: %s\n", b->content);
+            printf("a: %s\n", b->content);
         if (b->valid)
-          printf("a: valid\n");
+          printf("b: valid\n");
+        if (p->valid)
+          printf("p: valid\n");
 
           
         //U can parse the rest of argv now
