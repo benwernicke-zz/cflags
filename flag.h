@@ -17,6 +17,8 @@ static void filter_flags(int* argc, char** argv);
 #include <stdlib.h>
 #include <string.h>
 
+// TODO: Create linked flag
+
 typedef enum {
     BOOL,
     ARG,
