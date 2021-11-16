@@ -1,12 +1,12 @@
 #ifndef FLAG_H
 #define FLAG_H
 
-//Constructors for flags
+// Constructors for flags
 #define arg_flag(cname, fname, fdesc) arg_flag_t* cname = set_arg_flag(fname, fdesc);
 #define bool_flag(cname, fname, fdesc) bool_flag_t* cname = set_bool_flag(fname, fdesc);
 #define pos_flag(cname, fname, fdesc, pos) pos_flag_t* cname = set_pos_flag(pos, fname, fdesc);
 
-//removes valid flags from argc, argv --- stores them in global FLAG_BUFFER
+// removes valid flags from argc, argv --- stores them in global FLAG_BUFFER
 static void filter_flags(int* argc, char** argv);
 #endif
 
@@ -16,8 +16,6 @@ static void filter_flags(int* argc, char** argv);
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-// TODO: Create linked flag
 
 typedef enum {
     BOOL,
@@ -51,7 +49,7 @@ typedef struct {
 } flag_t;
 
 #ifndef FLAG_CAPACITY
-#define FLAG_CAPACITY 1 //little Hack (?)better Way(?)
+#define FLAG_CAPACITY 1 // little Hack (?)better Way(?)
 #endif
 
 #define ASSERT(condition, ...)        \
@@ -60,7 +58,7 @@ typedef struct {
         exit(1);                      \
     }
 
-//define FLAG_CAPACITY above #include "flag.h"
+// define FLAG_CAPACITY above #include "flag.h"
 static flag_t FLAG_BUFFER[FLAG_CAPACITY] = { { .name = NULL } };
 static size_t FLAG_COUNT = 0;
 
@@ -73,16 +71,16 @@ inline static size_t hash(const char* s)
     return index % FLAG_CAPACITY;
 }
 
-//for -h and --help
+// for -h and --help
 inline static void dump_descriptions()
 {
-    //to check if name and description exist
+    // to check if name and description exist
     const char* description = NULL;
 
     for (int i = 0; i < FLAG_CAPACITY; i++) {
         description = FLAG_BUFFER[i].description;
 
-        //printf with description check
+        // printf with description check
         printf("%s\t%s\n", FLAG_BUFFER[i].name, (description) ? description : "");
     }
     printf("\n");
@@ -92,9 +90,9 @@ inline static flag_t* set_general_flag(const char* name, const char* description
 {
     ASSERT(++FLAG_COUNT <= FLAG_CAPACITY, "ERROR: Too many Flags -- define FLAG_CAPACITY to resolve this\n");
     size_t index = hash(name);
-    //compensate collision
+    // compensate collision
     while (FLAG_BUFFER[index].name != NULL)
-        index = (index < FLAG_CAPACITY - 1) ? index + 1 : 0; //flip from arr len to 0
+        index = (index < FLAG_CAPACITY - 1) ? index + 1 : 0; // flip from arr len to 0
 
     FLAG_BUFFER[index].name = name;
     FLAG_BUFFER[index].type = type;
@@ -128,14 +126,14 @@ inline static pos_flag_t* set_pos_flag(size_t pos, const char* name, const char*
 
 inline static flag_t* get_flag(const char* name)
 {
-    //index where it should be
+    // index where it should be
     size_t index = hash(name);
 
-    //compensate collision
+    // compensate collision
     for (int k = 0; k < FLAG_CAPACITY; ++k) {
         if (strcmp(FLAG_BUFFER[index].name, name) == 0)
             return &FLAG_BUFFER[index];
-        index = (index < FLAG_CAPACITY - 1) ? index + 1 : 0; //flip from arr len to 0
+        index = (index < FLAG_CAPACITY - 1) ? index + 1 : 0; // flip from arr len to 0
     }
     return NULL;
 }
@@ -145,9 +143,9 @@ inline static bool is_help_flag(char* arg)
     return ((strcmp(arg, "-h") & strcmp(arg, "--help")) == 0);
 }
 
-//removes valid flags from argv --- stores them in global FLAG_BUFFER
-//no clue why this is static -- but resolves warnings
-// TODO: Extract some of this in seperate functions (?)
+// removes valid flags from argv --- stores them in global FLAG_BUFFER
+// no clue why this is static -- but resolves warnings
+//  TODO: Extract some of this in seperate functions (?)
 static void filter_flags(int* argc, char** argv)
 {
     flag_t* flag = NULL;
