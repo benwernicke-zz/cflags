@@ -49,7 +49,7 @@ typedef struct {
 } flag_t;
 
 #ifndef FLAG_CAPACITY
-#define FLAG_CAPACITY 1 // little Hack (?)better Way(?)
+#define FLAG_CAPACITY 1
 #endif
 
 #define ASSERT(condition, ...)        \
