@@ -7,7 +7,7 @@
 #define pos_flag(cname, fname, fdesc, pos) pos_flag_t* cname = set_pos_flag(pos, fname, fdesc);
 
 // removes valid flags from argc, argv --- stores them in global FLAG_BUFFER
-static void filter_flags(int* argc, char** argv);
+void filter_flags(int* argc, char** argv);
 #endif
 
 #ifndef FLAG_H_IMPLEMENTATION
@@ -144,8 +144,8 @@ inline static bool is_help_flag(char* arg)
 }
 
 // removes valid flags from argv --- stores them in global FLAG_BUFFER
-// no clue why this is static -- but resolves warnings
-static void filter_flags(int* argc, char** argv)
+// inline to make it the same function ptr in all translation units --> better way ???
+inline void filter_flags(int* argc, char** argv)
 {
     flag_t* flag = NULL;
     int rest_counter = 0;
