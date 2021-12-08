@@ -145,6 +145,7 @@ inline static bool is_help_flag(char* arg)
 
 // removes valid flags from argv --- stores them in global FLAG_BUFFER
 // inline to make it the same function ptr in all translation units --> better way ???
+// same structure in C as in C++ ??
 inline void filter_flags(int* argc, char** argv)
 {
     flag_t* flag = NULL;
